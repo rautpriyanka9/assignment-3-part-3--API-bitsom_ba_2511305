@@ -48,4 +48,61 @@ for line in lines:
 
 if not found:
     print("No matching lines found.")
-    
+
+import requests
+
+print("\n===== Task 2: API Integration =====\n")
+
+url = "https://dummyjson.com/products?limit=20"
+
+response = requests.get(url)
+
+data = response.json()
+
+products = data["products"]
+
+print("ID | Title                     | Category     | Price   | Rating")
+print("---------------------------------------------------------------")
+
+for p in products:
+    print(f"{p['id']:<3}| {p['title'][:25]:<25}| {p['category']:<12}| ${p['price']:<7}| {p['rating']}") 
+print("\nHigh Rated Products (rating ≥ 4.5):\n")
+
+filtered = []
+
+for p in products:
+    if p["rating"] >= 4.5:
+        filtered.append(p)
+
+# sort by price (descending)
+filtered.sort(key=lambda x: x["price"], reverse=True)
+
+for p in filtered:
+    print(f"{p['title']} - ${p['price']} - Rating: {p['rating']}")
+print("\nLaptop Products:\n")
+
+url2 = "https://dummyjson.com/products/category/laptops"
+
+response2 = requests.get(url2)
+
+data2 = response2.json()
+
+laptops = data2["products"]
+
+for item in laptops:
+    print(f"{item['title']} - ${item['price']}")
+print("\nCreating New Product:\n")
+
+post_url = "https://dummyjson.com/products/add"
+
+new_product = {
+    "title": "My Custom Product",
+    "price": 999,
+    "category": "electronics",
+    "description": "A product I created via API"
+}
+
+response3 = requests.post(post_url, json=new_product)
+
+print("Response from server:")
+print(response3.json())
